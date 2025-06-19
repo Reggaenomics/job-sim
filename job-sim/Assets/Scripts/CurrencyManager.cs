@@ -1,24 +1,25 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class CurrencyManager : MonoBehaviour
 {
     public static CurrencyManager Instance { get; private set; }
 
-    [Tooltip("Drag your MoneyText TMP UI element here")]
-    public TextMeshProUGUI moneyText;
+    [Header("UI Elements")]
+    public TextMeshProUGUI moneyText;            // your regular corner UI
+    public TextMeshProUGUI dialogueMoneyText;    // the new green text
 
     public int Money { get; private set; }
 
+    const string MoneyKey = "PlayerMoney";
+
     void Awake()
     {
-        // Singleton pattern setup
         if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            // Load saved money (0 default)
-            Money = PlayerPrefs.GetInt("PlayerMoney", 0);
+            Money = PlayerPrefs.GetInt(MoneyKey, 0);
         }
         else
         {
@@ -27,25 +28,22 @@ public class CurrencyManager : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-        UpdateUI();
-    }
+    void Start() => UpdateUI();
 
-    /// <summary> Adds (or subtracts) currency and updates UI + saves </summary>
     public void AddMoney(int amount)
     {
-        Money += amount;
-        if (Money < 0)
-            Money = 0;
-
+        Money = Mathf.Max(0, Money + amount);
+        PlayerPrefs.SetInt(MoneyKey, Money);
         UpdateUI();
-        PlayerPrefs.SetInt("PlayerMoney", Money);
     }
 
     void UpdateUI()
     {
-        // Display as: Money: $100
-        moneyText.text = $"Money: ${Money}";
+        string txt = $"Money: ${Money}";
+        if (moneyText != null)
+            moneyText.text = txt;
+
+        if (dialogueMoneyText != null)
+            dialogueMoneyText.text = txt;
     }
 }
