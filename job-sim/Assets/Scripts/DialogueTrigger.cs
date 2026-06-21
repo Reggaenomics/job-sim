@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class DialogueTrigger : MonoBehaviour
@@ -10,6 +11,9 @@ public class DialogueTrigger : MonoBehaviour
 
     [Tooltip("Your MouseLook component")]
     public MouseLook mouseLook;
+
+    [Tooltip("The TMP text that shows the dialogue body")]
+    public TextMeshProUGUI dialogueBodyText;
 
     bool playerNearby = false;
 
@@ -44,10 +48,21 @@ public class DialogueTrigger : MonoBehaviour
     void OpenDialogue()
     {
         dialoguePanel.SetActive(true);
+        RefreshDialogueText();
         playerController.enabled = false;
         mouseLook.enabled = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+    }
+
+    void RefreshDialogueText()
+    {
+        if (dialogueBodyText == null) return;
+
+        var cm = CurrencyManager.Instance;
+        string status = cm.IsEmployed ? $"EMPLOYED - {cm.JobTitle}" : "UNEMPLOYED";
+        dialogueBodyText.text =
+            $"Welcome to McDick's\n\n\n    You are currently {status}\n\n\n    Would you like to work a shift?";
     }
 
     public void CloseDialogue()
@@ -57,5 +72,10 @@ public class DialogueTrigger : MonoBehaviour
         mouseLook.enabled = true;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    public void DoJob()
+    {
+        CurrencyManager.Instance.AddMoney(10);
     }
 }

@@ -10,6 +10,8 @@ public class CurrencyManager : MonoBehaviour
     public TextMeshProUGUI dialogueMoneyText;    // the new green text
 
     public int Money { get; private set; }
+    public bool IsEmployed { get; private set; } = true;
+    public string JobTitle { get; private set; } = "MANAGER";
 
     const string MoneyKey = "PlayerMoney";
 
